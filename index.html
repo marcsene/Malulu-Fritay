@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="ht">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MALULU FRITAY - Meni ak Rezèvasyon / Menú y Reservas</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        amber: {
+                            400: '#fbbf24',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                        },
+                        brand: {
+                            dark: '#0f0a08',
+                            card: '#1a120e',
+                            gold: '#dfa233',
+                            accent: '#e65100',
+                            cream: '#fbf7f0'
+                        }
+                    },
+                    fontFamily: {
+                        heading: ['Cinzel', 'serif'],
+                        body: ['Plus Jakarta Sans', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #0f0a08;
+            color: #fbf7f0;
+        }
+        .font-heading {
+            font-family: 'Cinzel', serif;
+        }
+        .hero-bg {
+            background: linear-gradient(180deg, rgba(15, 10, 8, 0.45) 0%, rgba(15, 10, 8, 0.95) 85%, #0f0a08 100%), 
+                        url('https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat;
+        }
+        .gold-glow {
+            box-shadow: 0 0 25px rgba(223, 162, 51, 0.25);
+        }
+        .gold-border {
+            border: 1px solid rgba(223, 162, 51, 0.3);
+        }
+        .spanish-subtext {
+            color: #dfa233;
+            font-style: italic;
+            font-size: 0.9em;
+        }
+        /* Custom scrollbar for cart */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1a120e;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #d97706;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-amber-500 selection:text-black">
+
+    <!-- Header Navigation -->
+    <header class="sticky top-0 z-50 bg-brand-dark/95 backdrop-blur-md border-b border-amber-500/20 px-4 lg:px-8 py-3">
+        <div class="max-w-6xl mx-auto flex items-center justify-between gap-2">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-black font-bold text-xl shadow-lg font-heading">
+                    M
+                </div>
+                <div>
+                    <h1 class="font-heading text-lg lg:text-xl font-bold tracking-wider text-amber-400">MALULU FRITAY</h1>
+                    <p class="text-[10px] sm:text-xs text-stone-400 tracking-wider uppercase">Kwitman Ayisyen Gourmet / Gastronomía Haitiana</p>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-2 sm:space-x-3">
+                <!-- Cart Trigger Button -->
+                <a href="#order-section" class="flex items-center space-x-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black font-bold px-3 py-2 sm:px-4 rounded-full transition-all text-xs sm:text-sm shadow-md">
+                    <i class="fa-brands fa-whatsapp font-bold text-base sm:text-lg"></i>
+                    <span id="cart-counter" class="bg-black text-amber-400 rounded-full px-2 py-0.5 text-xs">0</span>
+                    <span class="hidden sm:inline">Gade Kòmand / Ver Pedido</span>
+                </a>
+
+                <!-- Admin Access Button -->
+                <button onclick="openAdminModal()" title="Mod Administratè / Modo Admin" class="p-2 sm:px-3 sm:py-2 bg-stone-900 hover:bg-stone-800 text-amber-400 rounded-full border border-amber-500/30 text-xs sm:text-sm flex items-center gap-1 transition-colors">
+                    <i class="fa-solid fa-lock"></i>
+                    <span class="hidden md:inline font-semibold">Admin</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Admin Banner Indicator (Hidden by default) -->
+    <div id="admin-banner" class="hidden bg-amber-500 text-black px-4 py-2 font-bold text-xs sm:text-sm text-center flex items-center justify-between">
+        <span class="flex items-center justify-center gap-2 mx-auto">
+            <i class="fa-solid fa-user-shield"></i>
+            <span>MOD ADMINISTRATÈ AKTIF - Ou ka modifye pri yo an tan reyèl / MODO ADMIN ACTIVO - Puedes cambiar los precios en tiempo real</span>
+        </span>
+        <button onclick="toggleAdminMode(false)" class="bg-black text-amber-400 px-3 py-1 rounded-lg text-xs hover:bg-stone-900 font-semibold">
+            Sòti / Salir
+        </button>
+    </div>
+
+    <!-- Hero / Welcome Section -->
+    <section class="hero-bg min-h-[70vh] flex items-center justify-center text-center px-4 py-16 relative overflow-hidden">
+        <div class="max-w-3xl mx-auto space-y-6">
+            <span class="inline-block px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs sm:text-sm font-medium tracking-wide">
+                🔥 Otantik Manje Ayisyen / Auténtica Comida Haitiana
+            </span>
+            
+            <h1 class="font-heading text-3xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-tight">
+                Byen vni nan <br>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-amber-400 to-amber-500">
+                    MALULU FRITAY
+                </span>
+            </h1>
+            
+            <p class="text-lg sm:text-2xl spanish-subtext font-light">
+                Bienvenido a MALULU FRITAY
+            </p>
+
+            <p class="text-stone-200 text-base sm:text-xl max-w-2xl mx-auto leading-relaxed pt-1 font-medium">
+                Fè rezèvasyon ak kòmand ou pou w jwi pi bon gou nan peyi a.
+                <br>
+                <span class="text-stone-400 text-xs sm:text-base font-normal italic">
+                    Haz tus reservas de hora y pedidos para disfrutar del mejor sabor caribeño.
+                </span>
+            </p>
+
+            <div class="pt-4 flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <a href="#catalog" class="w-full sm:w-auto bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-stone-950 font-bold px-8 py-4 rounded-xl transition-all shadow-lg gold-glow text-center text-sm sm:text-base flex items-center justify-center gap-2">
+                    <span>Gade Katalòg ak Resève / Ver Catálogo y Reservar</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Catalog Section -->
+    <main id="catalog" class="max-w-6xl mx-auto px-4 py-12 space-y-16 flex-grow w-full">
+        
+        <!-- Section Header -->
+        <div class="text-center space-y-2">
+            <h2 class="font-heading text-2xl sm:text-4xl font-bold text-white">
+                Meni Spesyal Nou An / Nuestro Menú Especial
+            </h2>
+            <p class="spanish-subtext text-sm sm:text-base">
+                Chwazi plat ou renmen yo pou kòmand ou / Selecciona tus platillos favoritos para tu reserva
+            </p>
+            <div class="w-24 h-1 bg-gradient-to-r from-transparent via-amber-500 to-transparent mx-auto rounded-full mt-3"></div>
+        </div>
+
+        <!-- CATEGORY 1: FRIDAY SPECIAL (GUISO / RAGOU) -->
+        <section class="space-y-6">
+            <div class="p-4 sm:p-6 rounded-2xl bg-gradient-to-r from-amber-950/50 via-brand-card to-brand-card gold-border">
+                <div class="flex items-center gap-3">
+                    <span class="p-3 bg-amber-500/20 text-amber-400 rounded-xl text-2xl">
+                        <i class="fa-solid fa-fire-burner"></i>
+                    </span>
+                    <div>
+                        <h3 class="text-xl sm:text-2xl font-bold text-amber-400 font-heading">
+                            Chak Vandredi: "Bon Ragou"
+                        </h3>
+                        <p class="spanish-subtext text-xs sm:text-sm">
+                            Cada Viernes: "Buen Guiso" o "Buen Estofado"
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="friday-catalog">
+                <!-- Products dynamically rendered here -->
+            </div>
+        </section>
+
+        <!-- CATEGORY 2: WEEKEND SPECIAL (FRITAY) -->
+        <section class="space-y-6">
+            <div class="p-4 sm:p-6 rounded-2xl bg-gradient-to-r from-amber-950/50 via-brand-card to-brand-card gold-border">
+                <div class="flex items-center gap-3">
+                    <span class="p-3 bg-amber-500/20 text-amber-400 rounded-xl text-2xl">
+                        <i class="fa-solid fa-drumstick-bite"></i>
+                    </span>
+                    <div>
+                        <h3 class="text-xl sm:text-2xl font-bold text-amber-400 font-heading">
+                            Samdi ak Dimanch: "Bon Fritay Ayisyen"
+                        </h3>
+                        <p class="spanish-subtext text-xs sm:text-sm">
+                            Sábado y Domingo: "Buena Fritay Haitiana"
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="weekend-catalog">
+                <!-- Products dynamically rendered here -->
+            </div>
+        </section>
+
+        <!-- RESERVATION & WHATSAPP ORDER FORM SECTION -->
+        <section id="order-section" class="bg-gradient-to-b from-brand-card to-stone-950 rounded-3xl p-6 sm:p-10 gold-border space-y-8 shadow-2xl">
+            <div class="text-center space-y-2">
+                <h3 class="font-heading text-2xl sm:text-3xl font-bold text-amber-400">
+                    Resève Lè ak Konfime Kòmand Ou
+                </h3>
+                <p class="spanish-subtext text-sm sm:text-base">
+                    Reservar Hora y Confirmar Pedido
+                </p>
+                <p class="text-stone-300 text-xs sm:text-sm max-w-xl mx-auto">
+                    Ranpli enfòmasyon yo pou voye kòmand ou sou WhatsApp nou an dirèk.
+                    <br><span class="text-stone-500 italic">Completa los datos y se enviará tu reserva directamente a nuestro WhatsApp.</span>
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                
+                <!-- Summary of Selected Items -->
+                <div class="lg:col-span-5 bg-stone-900/90 p-5 rounded-2xl border border-stone-800 space-y-4">
+                    <h4 class="font-bold text-white border-b border-stone-800 pb-3 flex items-center justify-between">
+                        <div>
+                            <span class="block text-sm sm:text-base">Rezime Kòmand</span>
+                            <span class="spanish-subtext text-xs block font-normal">Resumen del Pedido</span>
+                        </div>
+                        <i class="fa-solid fa-receipt text-amber-400 text-xl"></i>
+                    </h4>
+
+                    <div id="cart-list" class="space-y-3 max-h-64 overflow-y-auto pr-1">
+                        <p id="empty-cart-msg" class="text-stone-500 text-xs sm:text-sm text-center py-6">
+                            Ou poko ajoute okenn plat nan kòmand lan. <br>
+                            <span class="text-[11px] text-stone-600 italic">No has agregado ningún platillo aún.</span>
+                        </p>
+                    </div>
+
+                    <div class="border-t border-stone-800 pt-3 flex justify-between items-center text-lg font-bold">
+                        <div>
+                            <span class="block text-stone-300 text-sm">Total Estimasyon:</span>
+                            <span class="spanish-subtext text-xs block font-normal">Total Estimado:</span>
+                        </div>
+                        <span id="cart-total" class="text-amber-400 font-heading text-xl sm:text-2xl">$0 CLP</span>
+                    </div>
+                </div>
+
+                <!-- Reservation Form -->
+                <form id="booking-form" class="lg:col-span-7 space-y-5" onsubmit="sendWhatsAppOrder(event)">
+                    
+                    <!-- Customer Name -->
+                    <div>
+                        <label class="block text-xs sm:text-sm font-semibold text-stone-300 mb-1">
+                            Non Konplè / Nombre Completo <span class="text-amber-400">*</span>
+                        </label>
+                        <input type="text" id="customer-name" required placeholder="Eg: Jean Baptiste / Maria Gonzales" 
+                            class="w-full bg-stone-950 border border-stone-800 rounded-xl px-4 py-3 text-white placeholder-stone-600 focus:outline-none focus:border-amber-500 transition-colors text-sm">
+                    </div>
+
+                    <!-- Phone Number -->
+                    <div>
+                        <label class="block text-xs sm:text-sm font-semibold text-stone-300 mb-1">
+                            Nimewo Telefòn / Número de Teléfono <span class="text-amber-400">*</span>
+                        </label>
+                        <input type="tel" id="customer-phone" required placeholder="+56 9 1234 5678" 
+                            class="w-full bg-stone-950 border border-stone-800 rounded-xl px-4 py-3 text-white placeholder-stone-600 focus:outline-none focus:border-amber-500 transition-colors text-sm">
+                    </div>
+
+                    <!-- Date & Time Selection -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs sm:text-sm font-semibold text-stone-300 mb-1">
+                                Dat Rezèvasyon / Fecha de Reserva <span class="text-amber-400">*</span>
+                            </label>
+                            <input type="date" id="booking-date" required 
+                                class="w-full bg-stone-950 border border-stone-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-amber-500 transition-colors text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs sm:text-sm font-semibold text-stone-300 mb-1">
+                                Lè Rezèvasyon / Hora de Reserva <span class="text-amber-400">*</span>
+                            </label>
+                            <select id="booking-time" required class="w-full bg-stone-950 border border-stone-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-amber-500 transition-colors text-sm">
+                                <option value="">Chwazi Lè / Seleccionar Hora</option>
+                                <option value="12:00 PM">12:00 PM</option>
+                                <option value="01:00 PM">01:00 PM</option>
+                                <option value="02:00 PM">02:00 PM</option>
+                                <option value="03:00 PM">03:00 PM</option>
+                                <option value="06:00 PM">06:00 PM</option>
+                                <option value="07:00 PM">07:00 PM</option>
+                                <option value="08:00 PM">08:00 PM</option>
+                                <option value="09:00 PM">09:00 PM</option>
+                                <option value="10:00 PM">10:00 PM</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Additional Notes -->
+                    <div>
+                        <label class="block text-xs sm:text-sm font-semibold text-stone-300 mb-1">
+                            Nòt oswa Kòmantè / Notas o Comentarios
+                        </label>
+                        <textarea id="booking-notes" rows="2" placeholder="Eg: San piman / Sin pimiento, plis pikliz..." 
+                            class="w-full bg-stone-950 border border-stone-800 rounded-xl px-4 py-3 text-white placeholder-stone-600 focus:outline-none focus:border-amber-500 transition-colors text-sm"></textarea>
+                    </div>
+
+                    <!-- Configurable WhatsApp Target Selection -->
+                    <div class="bg-amber-950/30 p-4 rounded-xl border border-amber-500/30 space-y-3">
+                        <label class="block text-xs sm:text-sm font-semibold text-stone-300">
+                            Chwazi WhatsApp pou voye kòmand / Selecciona WhatsApp de destino: <span class="text-amber-400">*</span>
+                        </label>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <label class="flex items-center gap-3 p-3 rounded-xl bg-stone-950 border border-stone-800 cursor-pointer hover:border-amber-500 transition-colors">
+                                <input type="radio" name="whatsapp_target" value="56920628330" checked class="accent-amber-500 w-4 h-4">
+                                <div class="text-left">
+                                    <span class="block text-white font-bold text-xs sm:text-sm">+56 9 2062 8330</span>
+                                    <span class="text-[11px] text-amber-400/90">Liy 1 / Línea 1</span>
+                                </div>
+                            </label>
+
+                            <label class="flex items-center gap-3 p-3 rounded-xl bg-stone-950 border border-stone-800 cursor-pointer hover:border-amber-500 transition-colors">
+                                <input type="radio" name="whatsapp_target" value="56920275931" class="accent-amber-500 w-4 h-4">
+                                <div class="text-left">
+                                    <span class="block text-white font-bold text-xs sm:text-sm">+56 9 2027 5931</span>
+                                    <span class="text-[11px] text-amber-400/90">Liy 2 / Línea 2</span>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                        <button type="submit" onclick="setTargetNumber('56920628330')" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3.5 px-4 rounded-xl transition-all shadow-lg flex items-center justify-center gap-2 text-xs sm:text-sm">
+                            <i class="fa-brands fa-whatsapp text-lg"></i>
+                            <span>Voye sou +56 9 2062 8330</span>
+                        </button>
+
+                        <button type="submit" onclick="setTargetNumber('56920275931')" class="w-full bg-emerald-700 hover:bg-emerald-600 text-white font-bold py-3.5 px-4 rounded-xl transition-all shadow-lg flex items-center justify-center gap-2 text-sm sm:text-base">
+                            <i class="fa-brands fa-whatsapp text-lg"></i>
+                            <span>Voye sou +56 9 2027 5931</span>
+                        </button>
+                    </div>
+                </form>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-stone-950 border-t border-stone-800 py-8 px-4 text-center text-stone-500 text-xs space-y-2">
+        <p class="font-heading text-amber-400 text-sm font-bold">MALULU FRITAY</p>
+        <p>Pi bon gou manje peyi Ayiti / Sabores auténticos de Haití</p>
+        <p class="text-stone-600 pt-2">© 2026 MALULU FRITAY. Tout dwa rezève / Todos los derechos reservados.</p>
+    </footer>
+
+    <!-- Admin PIN Modal -->
+    <div id="admin-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-brand-card gold-border p-6 rounded-2xl max-w-sm w-full space-y-4 text-center shadow-2xl relative">
+            <button onclick="closeAdminModal()" class="absolute top-3 right-3 text-stone-400 hover:text-white">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+
+            <div class="w-12 h-12 bg-amber-500/20 text-amber-400 rounded-full flex items-center justify-center mx-auto text-xl">
+                <i class="fa-solid fa-key"></i>
+            </div>
+
+            <div>
+                <h3 class="text-lg font-bold text-white">Mod Administratè</h3>
+                <p class="spanish-subtext text-xs">Modo Administrador</p>
+                <p class="text-stone-400 text-xs mt-1">Antre PIN sekirite a pou modifye pri yo (Defo: 1234):</p>
+            </div>
+
+            <input type="password" id="admin-pin" placeholder="****" maxlength="8"
+                class="w-full bg-stone-950 border border-stone-800 rounded-xl px-4 py-3 text-center text-white text-xl font-mono tracking-widest focus:outline-none focus:border-amber-500">
+
+            <div class="flex gap-2">
+                <button onclick="closeAdminModal()" class="w-1/2 bg-stone-800 text-stone-300 font-bold py-2.5 rounded-xl text-xs hover:bg-stone-700">
+                    Anule / Cancelar
+                </button>
+                <button onclick="verifyAdminPIN()" class="w-1/2 bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold py-2.5 rounded-xl text-xs">
+                    Antre / Entrar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application Script -->
+    <script>
+        // Initial Products State
+        const defaultProducts = [
+            // Friday Specials (Ragou / Guiso)
+            {
+                id: 'p1',
+                category: 'friday',
+                badgeHt: 'Vandredi',
+                badgeEs: 'Viernes',
+                titleHt: 'Ragou Kochon ak Legim (Guiso de Cerdo)',
+                titleEs: 'Guiso / Estofado Especial de Cerdo',
+                descHt: 'Yon bon ragou byen sazone ak tout epices peyi a, banann, legim ak vyann kochon ki byen moustik ak jwe.',
+                descEs: 'Delicioso estofado haitiano de cerdo sazonado con especias caribeñas, plátano, viandas y carne jugosa.',
+                price: 8500,
+                image: 'https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=800&q=80'
+            },
+            {
+                id: 'p2',
+                category: 'friday',
+                badgeHt: 'Vandredi',
+                badgeEs: 'Viernes',
+                titleHt: 'Bon Ragou Kalson / Pata Tradisyonèl',
+                titleEs: 'Estofado Gourmet Tradicional (Kalson)',
+                descHt: 'Byen kuit dousman ak sos tomat lokal, patat, karòt ak tout touche sekrè Malulu an.',
+                descEs: 'Cocinada a fuego lento con salsa de tomate criolla, papas, zanahorias y el toque secreto Malulu.',
+                price: 9000,
+                image: 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=80'
+            },
+            // Weekend Specials (Fritay)
+            {
+                id: 'p3',
+                category: 'weekend',
+                badgeHt: 'Samdi - Dimanch',
+                badgeEs: 'Sáb - Dom',
+                titleHt: 'Plat Fritay Konplè (Griyo, Banann ak Pikliz)',
+                titleEs: 'Bandeja Fritay Completa (Griot)',
+                descHt: 'Griyo kochon byen fri ak anpil gou, banann peze, marinad epi ak pikliz piman byen spaysi.',
+                descEs: 'Crujiente Griot (cerdo frito), plátano verde frito (banan peze), marinad y pikliz picante casero.',
+                price: 10000,
+                image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=800&q=80'
+            },
+            {
+                id: 'p4',
+                category: 'weekend',
+                badgeHt: 'Samdi - Dimanch',
+                badgeEs: 'Sáb - Dom',
+                titleHt: 'Sipè Fritay Miks Malulu (Fritay Familiar)',
+                titleEs: 'Super Fritay Mixto Familiar Malulu',
+                descHt: 'Melanj espesyal griyo, zèl poul, akra, banann ak patat fri, sèvi ak pikliz kay nou an.',
+                descEs: 'Combinación especial de Griot, alas fritas, akra, banan peze, batata frita y salsa casera pikliz.',
+                price: 12500,
+                image: 'https://images.unsplash.com/photo-1603048588665-791ca8aea617?auto=format&fit=crop&w=800&q=80'
+            }
+        ];
+
+        // Global State
+        let products = [];
+        let cart = [];
+        let isAdmin = false;
+        let selectedWhatsappNumber = '56920628330';
+        const ADMIN_PIN = '1234';
+
+        // Load Products from localStorage or set defaults
+        function initProducts() {
+            const stored = localStorage.getItem('malulu_products');
+            if (stored) {
+                try {
+                    products = JSON.parse(stored);
+                } catch(e) {
+                    products = [...defaultProducts];
+                }
+            } else {
+                products = [...defaultProducts];
+            }
+            renderCatalog();
+        }
+
+        // Save updated products to localStorage
+        function saveProducts() {
+            localStorage.setItem('malulu_products', JSON.stringify(products));
+            renderCatalog();
+            updateCartUI();
+        }
+
+        // Render Product Catalog UI
+        function renderCatalog() {
+            const fridayContainer = document.getElementById('friday-catalog');
+            const weekendContainer = document.getElementById('weekend-catalog');
+
+            fridayContainer.innerHTML = '';
+            weekendContainer.innerHTML = '';
+
+            products.forEach(p => {
+                const card = document.createElement('div');
+                card.className = "bg-brand-card rounded-2xl overflow-hidden gold-border flex flex-col justify-between hover:border-amber-500/60 transition-all duration-300";
+
+                card.innerHTML = `
+                    <div class="relative h-56 sm:h-64 overflow-hidden">
+                        <img src="${p.image}" alt="${p.titleHt}" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500">
+                        <span class="absolute top-3 right-3 bg-amber-500 text-stone-950 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                            ${p.badgeHt} / ${p.badgeEs}
+                        </span>
+                    </div>
+                    <div class="p-5 flex-grow flex flex-col justify-between space-y-4">
+                        <div>
+                            <div class="flex justify-between items-start gap-2">
+                                <h4 class="text-base sm:text-lg font-bold text-white">${p.titleHt}</h4>
+                                <span class="text-amber-400 font-bold text-base sm:text-lg font-heading whitespace-nowrap">$${p.price.toLocaleString('es-CL')}</span>
+                            </div>
+                            <p class="spanish-subtext font-medium">${p.titleEs}</p>
+                            <p class="text-stone-300 text-xs sm:text-sm mt-2 leading-relaxed">
+                                ${p.descHt}
+                                <br><span class="text-stone-400 text-xs italic">${p.descEs}</span>
+                            </p>
+                        </div>
+
+                        ${isAdmin ? `
+                            <!-- Admin Price Edit Form -->
+                            <div class="bg-amber-950/40 p-3 rounded-xl border border-amber-500/40 space-y-2">
+                                <label class="block text-xs font-bold text-amber-300">
+                                    Modifye Pri ($ CLP) / Modificar Precio:
+                                </label>
+                                <div class="flex gap-2">
+                                    <input type="number" id="input-price-${p.id}" value="${p.price}" step="100" min="0"
+                                        class="w-full bg-stone-950 border border-amber-500/50 rounded-lg px-3 py-1.5 text-white font-mono text-sm focus:outline-none">
+                                    <button onclick="updateProductPrice('${p.id}')" class="bg-amber-500 hover:bg-amber-400 text-black font-bold px-3 py-1.5 rounded-lg text-xs">
+                                        Anrejistre / Guardar
+                                    </button>
+                                </div>
+                            </div>
+                        ` : ''}
+
+                        <button onclick="addToCart('${p.id}')" class="w-full bg-stone-800 hover:bg-amber-500 hover:text-stone-950 text-amber-400 font-semibold py-2.5 rounded-xl transition-all border border-amber-500/30 flex items-center justify-center gap-2 text-xs sm:text-sm">
+                            <i class="fa-solid fa-plus"></i>
+                            <span>Ajoute nan kòmand / Agregar a mi pedido</span>
+                        </button>
+                    </div>
+                `;
+
+                if (p.category === 'friday') {
+                    fridayContainer.appendChild(card);
+                } else {
+                    weekendContainer.appendChild(card);
+                }
+            });
+        }
+
+        // Admin functionality
+        function openAdminModal() {
+            document.getElementById('admin-modal').classList.remove('hidden');
+            document.getElementById('admin-pin').focus();
+        }
+
+        function closeAdminModal() {
+            document.getElementById('admin-modal').classList.add('hidden');
+            document.getElementById('admin-pin').value = '';
+        }
+
+        function verifyAdminPIN() {
+            const inputPIN = document.getElementById('admin-pin').value;
+            if (inputPIN === ADMIN_PIN) {
+                toggleAdminMode(true);
+                closeAdminModal();
+            } else {
+                alert('PIN Sèvis ki pa korek / PIN incorrecto');
+            }
+        }
+
+        function toggleAdminMode(activate) {
+            isAdmin = activate;
+            const banner = document.getElementById('admin-banner');
+            if (isAdmin) {
+                banner.classList.remove('hidden');
+            } else {
+                banner.classList.add('hidden');
+            }
+            renderCatalog();
+        }
+
+        function updateProductPrice(productId) {
+            const newPriceInput = document.getElementById(`input-price-${productId}`);
+            const newPrice = parseInt(newPriceInput.value, 10);
+            if (isNaN(newPrice) || newPrice < 0) {
+                alert('Mete yon pri ki valab / Ingresa un precio válido');
+                return;
+            }
+
+            const product = products.find(p => p.id === productId);
+            if (product) {
+                product.price = newPrice;
+                saveProducts();
+                alert('Pri anrejistre ak siksè! / ¡Precio guardado con éxito!');
+            }
+        }
+
+        // Shopping Cart Logic
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+
+            const existing = cart.find(item => item.id === productId);
+            if (existing) {
+                existing.quantity += 1;
+            } else {
+                cart.push({
+                    id: product.id,
+                    titleHt: product.titleHt,
+                    price: product.price,
+                    quantity: 1
+                });
+            }
+            updateCartUI();
+        }
+
+        function removeFromCart(productId) {
+            const itemIndex = cart.findIndex(item => item.id === productId);
+            if (itemIndex > -1) {
+                if (cart[itemIndex].quantity > 1) {
+                    cart[itemIndex].quantity -= 1;
+                } else {
+                    cart.splice(itemIndex, 1);
+                }
+            }
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            const cartList = document.getElementById('cart-list');
+            const cartCounter = document.getElementById('cart-counter');
+            const cartTotal = document.getElementById('cart-total');
+
+            // Sync cart prices with latest product prices
+            cart.forEach(item => {
+                const updatedProduct = products.find(p => p.id === item.id);
+                if (updatedProduct) {
+                    item.price = updatedProduct.price;
+                }
+            });
+
+            const totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+            const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+            cartCounter.innerText = totalCount;
+            cartTotal.innerText = `$${totalPrice.toLocaleString('es-CL')} CLP`;
+
+            if (cart.length === 0) {
+                cartList.innerHTML = `
+                    <p id="empty-cart-msg" class="text-stone-500 text-xs sm:text-sm text-center py-6">
+                        Ou poko ajoute okenn plat nan kòmand lan. <br>
+                        <span class="text-[11px] text-stone-600 italic">No has agregado ningún platillo aún.</span>
+                    </p>
+                `;
+                return;
+            }
+
+            cartList.innerHTML = '';
+            cart.forEach(item => {
+                const itemEl = document.createElement('div');
+                itemEl.className = 'flex items-center justify-between bg-stone-950 p-2.5 rounded-xl border border-stone-800 text-xs sm:text-sm';
+                itemEl.innerHTML = `
+                    <div class="pr-2">
+                        <p class="font-bold text-white text-xs sm:text-sm">${item.titleHt}</p>
+                        <p class="text-amber-400 font-mono text-xs">$${item.price.toLocaleString('es-CL')} x ${item.quantity}</p>
+                    </div>
+                    <div class="flex items-center space-x-1.5">
+                        <button type="button" onclick="removeFromCart('${item.id}')" class="w-6 h-6 rounded-lg bg-stone-800 hover:bg-stone-700 text-amber-400 font-bold flex items-center justify-center">-</button>
+                        <span class="text-white font-bold text-xs sm:text-sm px-1">${item.quantity}</span>
+                        <button type="button" onclick="addToCart('${item.id}')" class="w-6 h-6 rounded-lg bg-stone-800 hover:bg-stone-700 text-amber-400 font-bold flex items-center justify-center">+</button>
+                    </div>
+                `;
+                cartList.appendChild(itemEl);
+            });
+        }
+
+        function setTargetNumber(num) {
+            selectedWhatsappNumber = num;
+            const radios = document.querySelectorAll('input[name="whatsapp_target"]');
+            radios.forEach(r => {
+                if(r.value === num) r.checked = true;
+            });
+        }
+
+        // WhatsApp Order Submission
+        function sendWhatsAppOrder(event) {
+            event.preventDefault();
+
+            const name = document.getElementById('customer-name').value.trim();
+            const phone = document.getElementById('customer-phone').value.trim();
+            const date = document.getElementById('booking-date').value;
+            const time = document.getElementById('booking-time').value;
+            const notes = document.getElementById('booking-notes').value.trim();
+
+            const radioSelected = document.querySelector('input[name="whatsapp_target"]:checked');
+            const targetPhone = radioSelected ? radioSelected.value : selectedWhatsappNumber;
+
+            if (cart.length === 0) {
+                alert('Tanpri chwazi omwen yon plat nan meni an. / Por favor selecciona al menos un producto del menú.');
+                return;
+            }
+
+            let orderItemsText = "";
+            let total = 0;
+
+            cart.forEach((item, index) => {
+                const subtotal = item.price * item.quantity;
+                total += subtotal;
+                orderItemsText += `${index + 1}. ${item.titleHt} x${item.quantity} - $${subtotal.toLocaleString('es-CL')} CLP\n`;
+            });
+
+            const message = 
+`*NOUVO REZÈV / NUEVA RESERVA - MALULU FRITAY* 🍽️
+
+👤 *Kliyan / Cliente:* ${name}
+📞 *Telefòn / Teléfono:* ${phone}
+📅 *Dat / Fecha:* ${date}
+⏰ *Lè / Hora:* ${time}
+
+🛒 *KÒMAND / PEDIDO:*
+${orderItemsText}
+💵 *TOTAL ESTIMASYON:* $${total.toLocaleString('es-CL')} CLP
+
+📝 *Nòt / Notas:* ${notes || 'Okenn / Ninguna'}
+
+_Sent via MALULU FRITAY Web App_`;
+
+            const encodedText = encodeURIComponent(message);
+            const whatsappUrl = `https://wa.me/${targetPhone}?text=${encodedText}`;
+
+            window.open(whatsappUrl, '_blank');
+        }
+
+        // Initialize page state
+        window.onload = function() {
+            initProducts();
+            const today = new Date().toISOString().split('T')[0];
+            const dateInput = document.getElementById('booking-date');
+            dateInput.setAttribute('min', today);
+            dateInput.value = today;
+        };
+    </script>
+</body>
+</html>
